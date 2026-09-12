@@ -2,6 +2,8 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { resend } from "@/lib/resend";
+import { welcomeEmailHtml } from "@/lib/emails/welcome-email";
 
 export type AuthFormState = {
   error?: string;
@@ -26,9 +28,6 @@ export async function signUpAction(
 
   const supabase = await createClient();
 
-  // This is what triggers Supabase Auth's confirmation email — the "Gmail
-  // notification" the user gets on sign-up. Configure the email template and
-  // a custom SMTP provider (e.g. Resend) in Supabase Dashboard > Auth.
   const { error } = await supabase.auth.signUp({
     email,
     password,
@@ -40,6 +39,18 @@ export async function signUpAction(
 
   if (error) {
     return { error: error.message };
+  }
+
+  try {
+    await resend.emails.send({
+      from: "BurgerHouse <onboarding@resend.dev>",
+      to: email,
+      subject: "¡Tu cuenta en BurgerHouse fue creada!",
+      html: welcomeEmailHtml(fullName),
+    });
+  } catch (emailError) {
+    console.error("Error enviando correo de bienvenida:", emailError);
+    // No bloqueamos el registro si el correo falla
   }
 
   return { success: true };
