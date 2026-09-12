@@ -10,6 +10,7 @@ const TABS: { id: ProductCategory | "all"; label: string }[] = [
   { id: "all", label: "Todo" },
   { id: "combos", label: "Combos" },
   { id: "burgers", label: "Burgers" },
+  { id: "drinks", label: "Bebidas" },
   { id: "desserts", label: "Postres" },
 ];
 

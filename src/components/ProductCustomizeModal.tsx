@@ -101,8 +101,16 @@ export function ProductCustomizeModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Image — top strip on mobile, fixed left column on desktop */}
-        <div className="relative h-48 shrink-0 sm:h-auto sm:w-[42%]">
-          <PlaceholderImage category={product.category} className="h-full w-full" />
+                <div className="relative h-48 shrink-0 sm:h-auto sm:w-[42%]">
+          {product.imageUrl ? (
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <PlaceholderImage category={product.category} className="h-full w-full" />
+          )} 
           <button
             onClick={onClose}
             aria-label="Cerrar"
