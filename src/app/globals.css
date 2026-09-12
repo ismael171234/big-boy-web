@@ -14,6 +14,7 @@
   --color-amber-light: #e8a93c;
   --color-brick: #8b2e1f;
   --color-brick-light: #a83c28;
+  --color-mustard: #d9a221;
   --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
 }
@@ -27,6 +28,7 @@
   --color-amber-light: var(--color-amber-light);
   --color-brick: var(--color-brick);
   --color-brick-light: var(--color-brick-light);
+  --color-mustard: var(--color-mustard);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
 }

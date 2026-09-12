@@ -27,13 +27,13 @@ export function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
-        scrolled ? "bg-char/95 backdrop-blur shadow-lg shadow-black/20" : "bg-transparent"
+      className={`fixed inset-x-0 top-0 z-40 bg-mustard transition-shadow duration-300 ${
+        scrolled ? "shadow-lg shadow-black/15" : ""
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className="font-display text-3xl tracking-wide text-bone">
-          BURGER<span className="text-amber-light">HOUSE</span>
+        <Link href="/" className="font-display text-3xl tracking-wide text-char">
+          BURGER<span className="text-brick">HOUSE</span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
@@ -41,7 +41,7 @@ export function Header() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-bone-dim transition-colors hover:text-amber-light"
+              className="text-sm font-medium text-char/75 transition-colors hover:text-brick"
             >
               {link.label}
             </a>
@@ -51,7 +51,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <Link
             href={user ? "/account" : "/login"}
-            className="hidden items-center gap-2 rounded-full border border-bone-dim/30 px-4 py-2 text-sm font-medium text-bone transition-colors hover:border-amber-light hover:text-amber-light sm:flex"
+            className="hidden items-center gap-2 rounded-full border border-char/25 px-4 py-2 text-sm font-medium text-char transition-colors hover:border-brick hover:text-brick sm:flex"
           >
             <UserIcon className="h-4 w-4" />
             {user ? "Mi cuenta" : "Ingresar"}
@@ -60,7 +60,7 @@ export function Header() {
           <button
             onClick={toggle}
             aria-label="Abrir carrito"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-bone text-char transition-transform hover:scale-105"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-char text-bone transition-transform hover:scale-105"
           >
             <ShoppingBag className="h-5 w-5" />
             {itemCount > 0 && (
