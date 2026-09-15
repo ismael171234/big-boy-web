@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Plus } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
@@ -24,19 +25,22 @@ export function ProductCard({
         large ? "sm:col-span-2 sm:row-span-2 sm:flex-row" : ""
       }`}
     >
-      <div className={`relative ${large ? "sm:w-1/2" : "aspect-[4/3] w-full"}`}>
-  {product.imageUrl ? (
-    <img
-      src={product.imageUrl}
-      alt={product.name}
-      className={`object-cover ${large ? "h-full w-full min-h-[220px]" : "h-full w-full"}`}
-    />
-  ) : (
-    <PlaceholderImage
-      category={product.category}
-      className={large ? "h-full w-full min-h-[220px]" : "h-full w-full"}
-    />
-  )}
+      <div className={`relative ${large ? "sm:w-1/2 min-h-[220px]" : "aspect-[4/3] w-full"}`}>
+        {product.imageUrl ? (
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            sizes={large ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"}
+            className="object-cover"
+            priority={large}
+          />
+        ) : (
+          <PlaceholderImage
+            category={product.category}
+            className={large ? "h-full w-full min-h-[220px]" : "h-full w-full"}
+          />
+        )}
         {discountPct !== null && (
           <span className="absolute left-3 top-3 rounded bg-amber-light px-2 py-0.5 text-xs font-bold text-char">
             -{discountPct}%

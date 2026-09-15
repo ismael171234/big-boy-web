@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ShoppingBag, User as UserIcon } from "lucide-react";
@@ -32,8 +33,15 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className="font-display text-3xl tracking-wide text-char">
-          BURGER<span className="text-brick">HOUSE</span>
+        <Link href="/" className="relative block h-9 w-36 shrink-0 sm:h-11 sm:w-44">
+          <Image
+            src="/logo-bigboy.png"
+            alt="Big Boy Burgers"
+            fill
+            sizes="180px"
+            className="object-contain"
+            priority
+          />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
