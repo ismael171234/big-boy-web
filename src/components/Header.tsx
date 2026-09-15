@@ -8,9 +8,9 @@ import { useCartStore } from "@/lib/cart-store";
 import { useSession } from "@/lib/use-session";
 
 const NAV_LINKS = [
-  { href: "#menu", label: "Carta" },
-  { href: "#promociones", label: "Promociones" },
-  { href: "#reservas", label: "Reservas" },
+  { href: "/#menu", label: "Carta" },
+  { href: "/#promociones", label: "Promociones" },
+  { href: "/#reservas", label: "Reservas" },
 ];
 
 export function Header() {
