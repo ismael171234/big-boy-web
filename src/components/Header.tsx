@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ShoppingBag, User as UserIcon } from "lucide-react";
+import { Menu, ShoppingBag, User as UserIcon, X } from "lucide-react";
 import { useCartStore } from "@/lib/cart-store";
 import { useSession } from "@/lib/use-session";
 
@@ -15,6 +15,7 @@ const NAV_LINKS = [
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { lines, toggle } = useCartStore();
   const { user } = useSession();
   const itemCount = lines.reduce((sum, l) => sum + l.quantity, 0);
@@ -24,6 +25,15 @@ export function Header() {
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Cierra el menú móvil automáticamente si la pantalla crece a tamaño desktop
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 768) setMobileOpen(false);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
@@ -77,7 +87,45 @@ export function Header() {
               </span>
             )}
           </button>
+
+          {/* Botón hamburguesa: solo visible por debajo de md */}
+          <button
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={mobileOpen}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-char transition-colors hover:bg-char/10 md:hidden"
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
+      </div>
+
+      {/* Panel del menú móvil */}
+      <div
+        className={`overflow-hidden bg-mustard transition-[max-height] duration-300 ease-in-out md:hidden ${
+          mobileOpen ? "max-h-80" : "max-h-0"
+        }`}
+      >
+        <nav className="flex flex-col gap-1 border-t border-char/10 px-5 py-3 sm:px-8">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileOpen(false)}
+              className="rounded-lg px-2 py-3 text-base font-medium text-char/85 transition-colors hover:bg-char/10 hover:text-brick"
+            >
+              {link.label}
+            </a>
+          ))}
+          <Link
+            href={user ? "/account" : "/login"}
+            onClick={() => setMobileOpen(false)}
+            className="mt-1 flex items-center gap-2 rounded-lg px-2 py-3 text-base font-medium text-char/85 transition-colors hover:bg-char/10 hover:text-brick"
+          >
+            <UserIcon className="h-4 w-4" />
+            {user ? "Mi cuenta" : "Ingresar"}
+          </Link>
+        </nav>
       </div>
     </header>
   );
