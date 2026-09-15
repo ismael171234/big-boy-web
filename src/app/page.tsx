@@ -7,9 +7,18 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <ProductCarousel />
-      <MenuSection />
-      <ReservationSection />
+
+      <div id="promociones">
+        <ProductCarousel />
+      </div>
+
+      <div id="menu">
+        <MenuSection />
+      </div>
+
+      <div id="reservas">
+        <ReservationSection />
+      </div>
     </>
   );
 }
