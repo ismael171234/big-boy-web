@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, ShoppingBag, User as UserIcon, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useCartStore } from "@/lib/cart-store";
 import { useSession } from "@/lib/use-session";
 
@@ -75,18 +76,29 @@ export function Header() {
             {user ? "Mi cuenta" : "Ingresar"}
           </Link>
 
-          <button
+          <motion.button
             onClick={toggle}
             aria-label="Abrir carrito"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-char text-bone transition-transform hover:scale-105"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            className="relative flex h-10 w-10 items-center justify-center rounded-full bg-char text-bone"
           >
             <ShoppingBag className="h-5 w-5" />
-            {itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brick px-1 text-xs font-bold text-bone">
-                {itemCount}
-              </span>
-            )}
-          </button>
+            <AnimatePresence>
+              {itemCount > 0 && (
+                <motion.span
+                  key={itemCount}
+                  initial={{ scale: 0.4, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.4, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 18 }}
+                  className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brick px-1 text-xs font-bold text-bone"
+                >
+                  {itemCount}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
 
           {/* Botón hamburguesa: solo visible por debajo de md */}
           <button

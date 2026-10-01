@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { saveReservation } from "@/actions/reservations";
 import { buildReservationMessage, buildWhatsappUrl } from "@/lib/whatsapp";
+import { Reveal } from "@/components/Reveal";
 
 export function ReservationSection() {
   const [form, setForm] = useState({
@@ -46,7 +47,7 @@ export function ReservationSection() {
 
   return (
     <section id="reservas" className="bg-char py-16 text-bone sm:py-24">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
+      <Reveal className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
         <div>
           <p className="text-sm font-medium text-amber-light">Reserva tu mesa</p>
           <h2 className="font-display text-4xl tracking-wide sm:text-5xl">
@@ -126,7 +127,7 @@ export function ReservationSection() {
             {submitting ? "Enviando..." : "Reservar por WhatsApp"}
           </button>
         </form>
-      </div>
+      </Reveal>
 
       <style>{`
         .input {
