@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { products } from "@/lib/data/products";
 import type { Product, ProductCategory } from "@/lib/types";
 import { ProductCard } from "@/components/ProductCard";
@@ -85,12 +85,15 @@ export function MenuSection() {
         </motion.div>
       </div>
 
-      {activeProduct && (
-        <ProductCustomizeModal
-          product={activeProduct}
-          onClose={() => setActiveProduct(null)}
-        />
-      )}
+      <AnimatePresence>
+        {activeProduct && (
+          <ProductCustomizeModal
+            key={activeProduct.id}
+            product={activeProduct}
+            onClose={() => setActiveProduct(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCartStore, useCartTotal, lineTotal } from "@/lib/cart-store";
 import { buildOrderMessage, buildWhatsappUrl } from "@/lib/whatsapp";
@@ -44,6 +44,11 @@ export function CartDrawer() {
     close();
   };
 
+  // Desliza el panel hacia la derecha para cerrarlo (gesto táctil)
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.x > 110 || info.velocity.x > 600) close();
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -58,13 +63,18 @@ export function CartDrawer() {
             onClick={close}
           />
 
-          {/* Drawer con resorte en vez de duration fija */}
+          {/* Drawer con resorte + swipe horizontal para cerrar */}
           <motion.aside
             className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-bone"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 320, damping: 34 }}
+            drag="x"
+            dragDirectionLock
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={{ left: 0, right: 0.5 }}
+            onDragEnd={handleDragEnd}
           >
             <div className="flex items-center justify-between border-b border-char/10 px-6 py-5">
               <h2 className="font-display text-2xl tracking-wide text-char">Tu pedido</h2>

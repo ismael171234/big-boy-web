@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { CartDrawer } from "@/components/CartDrawer";
+import { MobileCartBar } from "@/components/MobileCartBar";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="flex-1">{children}</main>
         <Footer />
         <CartDrawer />
+        <MobileCartBar />
       </body>
     </html>
   );

@@ -1,12 +1,19 @@
 "use client";
 
-// Valores deterministas (no Math.random) para evitar mismatches de
-// hidratación entre servidor y cliente, y para no violar la regla de
-// pureza de render de React. Igual se ven orgánicos gracias al patrón
-// pseudoaleatorio basado en el índice.
+// Generador pseudoaleatorio determinista basado SOLO en operaciones
+// enteras (multiplicacion de 32 bits + XOR + shifts). A diferencia de
+// Math.sin(), estas operaciones dan EXACTAMENTE el mismo resultado en
+// cualquier motor de JavaScript (servidor y navegador), por lo que no
+// provocan errores de hidratacion en Next.js.
+function mulberry32(seed: number) {
+  let t = (seed += 0x6d2b79f5);
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
 function seeded(i: number, salt: number) {
-  const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453;
-  return x - Math.floor(x);
+  return mulberry32(i * 10007 + salt * 7919);
 }
 
 export function EmberField({ count = 14 }: { count?: number }) {

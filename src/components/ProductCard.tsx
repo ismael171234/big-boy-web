@@ -23,6 +23,7 @@ export function ProductCard({
     <motion.article
       id={product.id}
       whileHover={{ y: -6 }}
+      whileTap={{ scale: 0.98 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
       className={`group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-char/5 transition-shadow duration-300 hover:shadow-xl hover:shadow-char/10 ${
         large ? "sm:col-span-2 sm:row-span-2 sm:flex-row" : ""

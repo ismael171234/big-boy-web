@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion, type PanInfo } from "motion/react";
 import { Minus, Plus, X } from "lucide-react";
 import type { Product, SelectedOption } from "@/lib/types";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
@@ -91,17 +92,37 @@ export function ProductCustomizeModal({
     onClose();
   };
 
+  // Desliza la hoja hacia abajo para cerrarla (gesto tactil, solo en mobile)
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.y > 120 || info.velocity.y > 600) onClose();
+  };
+
   return (
-    <div
+    <motion.div
       className="fixed inset-0 z-50 flex items-end justify-center bg-char/70 backdrop-blur-sm sm:items-center sm:p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       onClick={onClose}
     >
-      <div
+      <motion.div
         className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl bg-bone sm:flex-row sm:rounded-3xl"
+        initial={{ y: "100%", opacity: 0, scale: 0.98 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: "6%", opacity: 0, scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        drag="y"
+        dragDirectionLock
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.5 }}
+        onDragEnd={handleDragEnd}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Image — top strip on mobile, fixed left column on desktop */}
-                <div className="relative h-48 shrink-0 sm:h-auto sm:w-[42%]">
+        <div className="relative h-48 shrink-0 sm:h-auto sm:w-[42%]">
+          {/* Barra para indicar que se puede arrastrar (solo mobile) */}
+          <div className="absolute left-1/2 top-2 z-10 h-1.5 w-12 -translate-x-1/2 rounded-full bg-bone/70 sm:hidden" />
+
           {product.imageUrl ? (
             <img
               src={product.imageUrl}
@@ -110,7 +131,7 @@ export function ProductCustomizeModal({
             />
           ) : (
             <PlaceholderImage category={product.category} className="h-full w-full" />
-          )} 
+          )}
           <button
             onClick={onClose}
             aria-label="Cerrar"
@@ -130,10 +151,16 @@ export function ProductCustomizeModal({
           <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8">
             <p className="text-sm text-char/70">{product.description}</p>
 
-            {product.optionGroups.map((group) => {
+            {product.optionGroups.map((group, groupIndex) => {
               const count = selectedCountByGroup(group.id);
               return (
-                <div key={group.id} className="mt-6 border-t border-char/10 pt-5">
+                <motion.div
+                  key={group.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05 + groupIndex * 0.05, duration: 0.35 }}
+                  className="mt-6 border-t border-char/10 pt-5"
+                >
                   <div className="mb-3 flex items-center justify-between">
                     <div>
                       <h3 className="font-semibold text-char">{group.name}</h3>
@@ -160,9 +187,13 @@ export function ProductCustomizeModal({
                     {group.options.map((option) => {
                       const qty = selections[group.id]?.[option.id] ?? 0;
                       return (
-                        <div
+                        <motion.div
                           key={option.id}
-                          className="flex items-center justify-between rounded-xl bg-white px-4 py-3"
+                          animate={{
+                            backgroundColor: qty > 0 ? "rgba(201, 122, 43, 0.08)" : "rgba(255,255,255,1)",
+                          }}
+                          transition={{ duration: 0.25 }}
+                          className="flex items-center justify-between rounded-xl px-4 py-3"
                         >
                           <div>
                             <p className="text-sm font-medium text-char">{option.name}</p>
@@ -173,62 +204,69 @@ export function ProductCustomizeModal({
                             )}
                           </div>
                           <div className="flex items-center gap-3">
-                            <button
+                            <motion.button
+                              whileTap={{ scale: 0.85 }}
                               onClick={() => setOptionQty(group.id, option.id, -1)}
                               disabled={qty === 0}
                               aria-label={`Quitar ${option.name}`}
                               className="flex h-8 w-8 items-center justify-center rounded-full border border-char/20 text-char disabled:opacity-30"
                             >
                               <Minus className="h-4 w-4" />
-                            </button>
+                            </motion.button>
                             <span className="w-4 text-center text-sm font-semibold">{qty}</span>
-                            <button
+                            <motion.button
+                              whileTap={{ scale: 0.85 }}
                               onClick={() => setOptionQty(group.id, option.id, 1)}
                               aria-label={`Agregar ${option.name}`}
                               className="flex h-8 w-8 items-center justify-center rounded-full bg-char text-bone hover:bg-brick"
                             >
                               <Plus className="h-4 w-4" />
-                            </button>
+                            </motion.button>
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
           <div className="flex shrink-0 items-center gap-4 border-t border-char/10 bg-bone px-6 py-5 sm:px-8">
             <div className="flex items-center gap-3 rounded-full border border-char/20 px-2 py-1">
-              <button
+              <motion.button
+                whileTap={{ scale: 0.85 }}
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-char/10"
                 aria-label="Reducir cantidad"
               >
                 <Minus className="h-4 w-4" />
-              </button>
+              </motion.button>
               <span className="w-5 text-center font-semibold">{quantity}</span>
-              <button
+              <motion.button
+                whileTap={{ scale: 0.85 }}
                 onClick={() => setQuantity((q) => q + 1)}
                 className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-char/10"
                 aria-label="Aumentar cantidad"
               >
                 <Plus className="h-4 w-4" />
-              </button>
+              </motion.button>
             </div>
 
-            <button
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              animate={missingRequired.length === 0 ? { scale: [1, 1.015, 1] } : {}}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
               onClick={handleAddToCart}
               disabled={missingRequired.length > 0}
               className="flex flex-1 items-center justify-between rounded-full bg-brick px-6 py-3 text-sm font-semibold text-bone transition-colors hover:bg-brick-light disabled:cursor-not-allowed disabled:opacity-40"
             >
               <span>{missingRequired.length > 0 ? "Completa lo obligatorio" : "Agregar"}</span>
               <span>S/ {(unitTotal * quantity).toFixed(2)}</span>
-            </button>
+            </motion.button>
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
