@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCartStore, useCartTotal, lineTotal } from "@/lib/cart-store";
-import { buildOrderMessage, buildWhatsappUrl } from "@/lib/whatsapp";
-import { placeOrder, getActiveCoupons } from "@/actions/orders";
+import { createPaymentPreference, getActiveCoupons } from "@/actions/orders";
 import { useSession } from "@/lib/use-session";
 
 export function CartDrawer() {
-  const { lines, isOpen, close, removeLine, updateQuantity, clear } = useCartStore();
+  const { lines, isOpen, close, removeLine, updateQuantity } = useCartStore();
   const { user } = useSession();
   const subtotal = useCartTotal(lines);
 
@@ -18,6 +17,7 @@ export function CartDrawer() {
   >([]);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [placing, setPlacing] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && user) {
@@ -33,18 +33,33 @@ export function CartDrawer() {
 
   const handleCheckout = async () => {
     setPlacing(true);
-    const message = buildOrderMessage({ lines, total, couponCode: coupon?.code, discount });
+    setCheckoutError(null);
 
-    await placeOrder({ lines, subtotal, discount, total, couponCode: coupon?.code });
+    const result = await createPaymentPreference({
+      lines,
+      subtotal,
+      discount,
+      total,
+      couponCode: coupon?.code,
+    });
 
-    window.open(buildWhatsappUrl(message), "_blank");
-    clear();
-    setAppliedCoupon(null);
-    setPlacing(false);
-    close();
+    if (!result.ok) {
+      setCheckoutError("No pudimos iniciar el pago. Intenta de nuevo en unos segundos.");
+      setPlacing(false);
+      return;
+    }
+
+    // Guardamos el resumen del pedido para mostrarlo y armar el mensaje de
+    // WhatsApp cuando el cliente vuelva de MercadoPago.
+    sessionStorage.setItem(
+      "pendingOrder",
+      JSON.stringify({ lines, subtotal, discount, total, couponCode: coupon?.code })
+    );
+
+    window.location.href = result.initPoint;
   };
 
-  // Desliza el panel hacia la derecha para cerrarlo (gesto táctil)
+  // Desliza el panel hacia la derecha para cerrarlo (gesto tactil)
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.x > 110 || info.velocity.x > 600) close();
   };
@@ -53,7 +68,6 @@ export function CartDrawer() {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop con fade */}
           <motion.div
             className="fixed inset-0 z-50 bg-char/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
@@ -63,7 +77,6 @@ export function CartDrawer() {
             onClick={close}
           />
 
-          {/* Drawer con resorte + swipe horizontal para cerrar */}
           <motion.aside
             className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-bone"
             initial={{ x: "100%" }}
@@ -90,7 +103,7 @@ export function CartDrawer() {
                 className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center text-char/60"
               >
                 <ShoppingBag className="h-10 w-10" />
-                <p>Aún no agregaste nada. Elige algo de la carta.</p>
+                <p>Aun no agregaste nada. Elige algo de la carta.</p>
               </motion.div>
             ) : (
               <div className="flex-1 overflow-y-auto px-6 py-4">
@@ -135,7 +148,6 @@ export function CartDrawer() {
                             >
                               <Minus className="h-3.5 w-3.5" />
                             </button>
-                            {/* key={quantity} fuerza el re-mount → dispara la animación de "pulso" */}
                             <AnimatePresence mode="popLayout" initial={false}>
                               <motion.span
                                 key={line.quantity}
@@ -183,7 +195,7 @@ export function CartDrawer() {
                               : "bg-amber-light/40 text-char"
                           }`}
                         >
-                          {c.code} · -{c.discount_percent}%
+                          {c.code} - {c.discount_percent}%
                         </button>
                       ))}
                     </div>
@@ -218,18 +230,23 @@ export function CartDrawer() {
                     </motion.span>
                   </AnimatePresence>
                 </div>
+
+                {checkoutError && (
+                  <p className="mb-3 text-center text-xs text-brick">{checkoutError}</p>
+                )}
+
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={handleCheckout}
                   disabled={placing}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#009EE3] px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
                 >
-                  {placing ? "Enviando..." : "Confirmar por WhatsApp"}
+                  {placing ? "Redirigiendo a MercadoPago..." : "Pagar con MercadoPago"}
                 </motion.button>
                 {!user && (
                   <p className="mt-3 text-center text-xs text-char/50">
                     <a href="/login" className="underline">
-                      Inicia sesión
+                      Inicia sesion
                     </a>{" "}
                     para acumular compras y ganar cupones de descuento.
                   </p>
