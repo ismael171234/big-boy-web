@@ -164,4 +164,56 @@ body {
 
 .bob {
   animation: bob 2.2s ease-in-out infinite;
+} 
+
+
+/* ---------- Pulido general (Parte A del rediseño) ---------- */
+
+::selection {
+  background: var(--color-amber-light);
+  color: var(--color-char);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brick) var(--color-bone-dim);
+}
+html::-webkit-scrollbar {
+  width: 10px;
+}
+html::-webkit-scrollbar-track {
+  background: var(--color-bone-dim);
+}
+html::-webkit-scrollbar-thumb {
+  background: var(--color-brick);
+  border-radius: 999px;
+  border: 2px solid var(--color-bone-dim);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+
+/* ---------- Cinta de texto en movimiento (Marquee) ---------- */
+
+@keyframes marquee-move {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-move 36s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
 }

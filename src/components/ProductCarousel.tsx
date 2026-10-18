@@ -5,12 +5,17 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
-import { products } from "@/lib/data/products";
+import type { Product } from "@/lib/types";
 import { Reveal } from "@/components/Reveal";
 
-const featured = products.filter((p) => p.isFeatured);
-
-export function ProductCarousel() {
+export function ProductCarousel({ products }: { products: Product[] }) {
+  // Primero los destacados; si hay pocos, se completa con los productos en oferta
+  const featured = [
+    ...products.filter((p) => p.isFeatured),
+    ...products.filter(
+      (p) => !p.isFeatured && p.compareAtPrice && p.compareAtPrice > p.basePrice
+    ),
+  ].slice(0, 8);
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {
@@ -22,7 +27,10 @@ export function ProductCarousel() {
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <Reveal className="mb-8 flex items-end justify-between">
           <div>
-            <p className="text-sm font-medium text-brick">Lo más pedido</p>
+            <p className="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-brick">
+              <span className="h-px w-8 bg-brick/50" />
+              Lo más pedido
+            </p>
             <h2 className="font-display text-4xl tracking-wide text-char sm:text-5xl">
               Nuestros favoritos
             </h2>
@@ -56,7 +64,7 @@ export function ProductCarousel() {
         whileInView="show"
         viewport={{ once: true, margin: "-60px" }}
         variants={{ show: { transition: { staggerChildren: 0.1 } } }}
-        className="scrollbar-none flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-4 sm:px-8"
+        className="scrollbar-none flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-5 px-5 pb-6 sm:scroll-pl-8 sm:px-8 xl:scroll-pl-[calc((100vw-80rem)/2+2rem)] xl:pl-[calc((100vw-80rem)/2+2rem)]"
       >
         {featured.map((product) => {
           const discountPct = product.compareAtPrice
@@ -72,7 +80,7 @@ export function ProductCarousel() {
               }}
               whileHover={{ y: -8 }}
               transition={{ type: "spring", stiffness: 300, damping: 22 }}
-              className="group relative w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl bg-char shadow-lg shadow-char/10 sm:w-[320px]"
+              className="group relative w-[280px] shrink-0 snap-start overflow-hidden rounded-3xl bg-char shadow-xl shadow-char/15 ring-1 ring-char/10 sm:w-[320px]"
             >
               <div className="relative aspect-[4/5] w-full overflow-hidden">
                 {product.imageUrl ? (

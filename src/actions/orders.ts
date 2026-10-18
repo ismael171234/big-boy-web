@@ -41,8 +41,8 @@ async function insertPendingOrder(input: PlaceOrderInput) {
     order_id: order.id,
     // product_id en la tabla es uuid y hace referencia a public.products;
     // tus productos viven como datos estaticos (slugs tipo "big-temptation"),
-    // asi que no son uuids validos. Lo dejamos en null para no romper el
-    // insert; el nombre del producto ya queda guardado en product_name.
+    // asi que no son uuids validos. Lo dejamos en null; el nombre del
+    // producto ya queda guardado en product_name.
     product_id: null,
     product_name: line.productName,
     quantity: line.quantity,
@@ -86,13 +86,13 @@ export async function createPaymentPreference(input: PlaceOrderInput) {
         }),
         external_reference: created.orderId,
         back_urls: {
-          success: `${siteUrl}/pago/exito`,
-          pending: `${siteUrl}/pago/pendiente`,
-          failure: `${siteUrl}/pago/fallo`,
+          success: `${siteUrl}/pagoExitoso?order=${created.orderId}`,
+          pending: `${siteUrl}/pago/pendiente?order=${created.orderId}`,
+          failure: `${siteUrl}/pagoFallo`,
         },
         ...(isPubliclyReachable ? { auto_return: "approved" as const } : {}),
         notification_url: isPubliclyReachable
-          ? `${siteUrl}/api/webhooks/mercadopago`
+          ? `${siteUrl}/api/webhooks`
           : undefined,
       },
     });

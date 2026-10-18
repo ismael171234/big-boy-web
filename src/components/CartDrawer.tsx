@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { useCartStore, useCartTotal, lineTotal } from "@/lib/cart-store";
@@ -10,6 +11,7 @@ import { useSession } from "@/lib/use-session";
 export function CartDrawer() {
   const { lines, isOpen, close, removeLine, updateQuantity } = useCartStore();
   const { user } = useSession();
+  const pathname = usePathname();
   const subtotal = useCartTotal(lines);
 
   const [coupons, setCoupons] = useState<
@@ -63,6 +65,11 @@ export function CartDrawer() {
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.x > 110 || info.velocity.x > 600) close();
   };
+
+  // El carrito del cliente no se muestra en los paneles de staff
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/cocina")) {
+    return null;
+  }
 
   return (
     <AnimatePresence>
@@ -258,4 +265,4 @@ export function CartDrawer() {
       )}
     </AnimatePresence>
   );
-}
+} 

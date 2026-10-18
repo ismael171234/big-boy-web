@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { buildOrderMessage, buildWhatsappUrl } from "@/lib/whatsapp";
@@ -15,7 +16,9 @@ type PendingOrder = {
   couponCode?: string;
 };
 
-export default function PagoExitoPage() {
+function PagoExitosoContent() {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("order");
   const [order, setOrder] = useState<PendingOrder | null>(null);
   const clear = useCartStore((s) => s.clear);
 
@@ -73,9 +76,23 @@ export default function PagoExitoPage() {
         Confirmar por WhatsApp
       </a>
 
+      {orderId && (
+        <Link href={`/pedido/${orderId}`} className="text-sm font-semibold text-brick underline">
+          Ver el estado de mi pedido
+        </Link>
+      )}
+
       <Link href="/" className="text-sm text-char/50 underline">
         Volver al inicio
       </Link>
     </main>
+  );
+}
+
+export default function PagoExitosoPage() {
+  return (
+    <Suspense fallback={null}>
+      <PagoExitosoContent />
+    </Suspense>
   );
 }

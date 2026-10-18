@@ -4,17 +4,21 @@ import { Header } from "@/components/Header";
 import { CartDrawer } from "@/components/CartDrawer";
 import { MobileCartBar } from "@/components/MobileCartBar";
 import { Footer } from "@/components/Footer";
+import { Preloader } from "@/components/Preloader";
+import { ScrollProgress } from "@/components/ScrollProgress";
 
 export const metadata: Metadata = {
-  title: "Burger House — Hamburguesas a la parrilla",
+  title: "Big Boy Burgers — Hamburguesas a la parrilla",
   description:
-    "Hamburguesas artesanales, combos personalizables, reservas y pedidos por WhatsApp.",
+    "Hamburguesas artesanales, combos personalizables, reservas y pedidos online.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className="h-full">
       <body className="flex min-h-full flex-col">
+        <Preloader />
+        <ScrollProgress />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

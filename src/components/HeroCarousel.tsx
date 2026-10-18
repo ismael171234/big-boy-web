@@ -33,7 +33,7 @@ export function HeroCarousel() {
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden"
+            className="group absolute inset-0 overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
