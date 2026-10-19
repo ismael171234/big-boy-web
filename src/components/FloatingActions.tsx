@@ -24,7 +24,7 @@ export function FloatingActions() {
             whileTap={{ scale: 0.92 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             aria-label="Volver arriba"
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-char text-bone shadow-xl shadow-char/30 ring-1 ring-bone/10"
+            className="hard-sm flex h-11 w-11 items-center justify-center rounded-md border-[3px] border-char bg-yolk text-char"
           >
             <ArrowUp className="h-5 w-5" />
           </motion.button>
@@ -41,7 +41,7 @@ export function FloatingActions() {
         transition={{ delay: 3, type: "spring", stiffness: 300, damping: 20 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.92 }}
-        className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-[#25D366]/40"
+        className="hard-sm relative flex h-14 w-14 items-center justify-center rounded-full border-[3px] border-char bg-[#25D366] text-char"
       >
         <span className="absolute inset-0 animate-ping rounded-full bg-[#25D366]/40" />
         <MessageCircle className="relative h-7 w-7" />

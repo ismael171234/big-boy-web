@@ -6,8 +6,9 @@ import { AnimatePresence, animate, motion } from "motion/react";
 const KEY = "bb-preloader-seen";
 const WORD = "BIG BOY".split("");
 
-// Pantalla de carga: letras que suben, barra de progreso y cortina que se abre.
-// La primera vez dura ~2.4 s; en la misma sesión después, solo un destello corto.
+// Pantalla de carga: el nombre sale de abajo como en un cartel, una barra gruesa
+// se llena y la cortina amarilla se abre en dos. La primera vez dura ~2.5 s;
+// en la misma sesión después, solo un destello corto.
 export function Preloader() {
   const [show, setShow] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -57,78 +58,58 @@ export function Preloader() {
           role="status"
           aria-label="Cargando Big Boy Burgers"
         >
-          {/* Cortina: dos mitades que se abren */}
+          {/* Cortina: dos mitades amarillas que se abren */}
           <motion.div
-            className="absolute inset-x-0 top-0 h-1/2 bg-char"
+            className="absolute inset-x-0 top-0 h-1/2 bg-yolk"
             exit={{ y: "-100%", transition: { duration: 0.85, delay: 0.25, ease: [0.76, 0, 0.24, 1] } }}
           />
           <motion.div
-            className="absolute inset-x-0 bottom-0 h-1/2 bg-char"
+            className="absolute inset-x-0 bottom-0 h-1/2 bg-yolk"
             exit={{ y: "100%", transition: { duration: 0.85, delay: 0.25, ease: [0.76, 0, 0.24, 1] } }}
-          />
-
-          {/* Resplandor cálido de fondo */}
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 55% 45% at 50% 52%, rgba(201,122,43,0.22), transparent 70%)",
-            }}
-            exit={{ opacity: 0, transition: { duration: 0.3 } }}
           />
 
           {/* Contenido central */}
           <motion.div
-            className="absolute inset-0 flex flex-col items-center justify-center px-6"
-            exit={{ opacity: 0, scale: 1.08, transition: { duration: 0.35 } }}
+            className="absolute inset-0 flex flex-col items-center justify-center px-6 text-char"
+            exit={{ opacity: 0, scale: 1.06, transition: { duration: 0.3 } }}
           >
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.5em] text-mustard sm:text-xs">
-              Hamburguesas a la parrilla
-            </p>
-
             <h1
-              className="font-display flex text-[22vw] leading-[0.9] tracking-wide text-bone sm:text-[9rem]"
+              className="font-poster flex text-[clamp(3rem,13vw,9rem)] uppercase leading-[0.9] tracking-[-0.03em]"
               aria-hidden
             >
               {WORD.map((ch, i) => (
-                <span key={i} className="inline-block overflow-hidden px-[0.02em] py-[0.04em]">
+                <span key={i} className="inline-block overflow-hidden px-[0.01em] py-[0.06em]">
                   <motion.span
-                    className={`inline-block ${ch === " " ? "w-[0.3em]" : ""}`}
+                    className={`inline-block ${ch === " " ? "w-[0.28em]" : ""}`}
                     initial={{ y: "115%" }}
                     animate={{ y: 0 }}
                     transition={{ duration: 0.7, delay: 0.1 + i * 0.07, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    {ch === " " ? "\u00A0" : ch}
+                    {ch === " " ? " " : ch}
                   </motion.span>
                 </span>
               ))}
             </h1>
 
             <motion.p
-              className="font-display shimmer-text -mt-1 text-[8vw] tracking-[0.35em] sm:text-5xl"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.65 }}
+              className="font-poster mt-2 -rotate-2 bg-char px-4 py-1 text-[clamp(1.1rem,4vw,2rem)] uppercase tracking-tight text-yolk"
+              initial={{ opacity: 0, scale: 1.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.35, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
-              BURGERS
+              Burgers
             </motion.p>
 
-            {/* Barra de progreso */}
-            <div className="mt-10 w-56 sm:w-72">
-              <div className="h-[3px] w-full overflow-hidden rounded-full bg-bone/10">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-brick via-amber to-amber-light"
-                  style={{ width: `${progress}%` }}
-                />
+            {/* Barra de progreso gruesa, con el porcentaje en grande */}
+            <div className="mt-10 w-60 sm:w-80">
+              <div className="h-5 w-full border-[3px] border-char bg-paper p-[2px]">
+                <div className="h-full bg-char" style={{ width: `${progress}%` }} />
               </div>
-              <p className="mt-3 text-center text-xs font-medium tabular-nums tracking-widest text-bone/50">
-                {progress}%
-              </p>
+              <p className="font-poster mt-3 text-center text-2xl tabular-nums">{progress}%</p>
             </div>
           </motion.div>
         </div>
       )}
     </AnimatePresence>
   );
-}  
+}

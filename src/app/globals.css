@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource/bebas-neue";
+@import "@fontsource/archivo-black";
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
@@ -15,6 +16,10 @@
   --color-brick: #8b2e1f;
   --color-brick-light: #a83c28;
   --color-mustard: #d9a221;
+  --color-yolk: #fdc401;
+  --color-ketchup: #d8351e;
+  --color-paper: #fbf6e6;
+  --font-poster: "Archivo Black", "Arial Black", sans-serif;
   --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
 }
@@ -29,6 +34,10 @@
   --color-brick: var(--color-brick);
   --color-brick-light: var(--color-brick-light);
   --color-mustard: var(--color-mustard);
+  --color-yolk: var(--color-yolk);
+  --color-ketchup: var(--color-ketchup);
+  --color-paper: var(--color-paper);
+  --font-poster: var(--font-poster);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
 }
@@ -82,7 +91,8 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-/* ---------- Ambient "top-tier" effects ---------- */
+
+/* ---------- Efectos ambientales ---------- */
 
 @keyframes ember-rise {
   0% {
@@ -164,10 +174,9 @@ body {
 
 .bob {
   animation: bob 2.2s ease-in-out infinite;
-} 
+}
 
-
-/* ---------- Pulido general (Parte A del rediseño) ---------- */
+/* ---------- Pulido general ---------- */
 
 ::selection {
   background: var(--color-amber-light);
@@ -196,7 +205,6 @@ h3 {
   text-wrap: balance;
 }
 
-
 /* ---------- Cinta de texto en movimiento (Marquee) ---------- */
 
 @keyframes marquee-move {
@@ -216,4 +224,74 @@ h3 {
 
 .marquee:hover .marquee-track {
   animation-play-state: paused;
+}
+
+/* ---------- Identidad Big Boy: negro + amarillo del logo ---------- */
+
+.font-poster {
+  font-family: var(--font-poster);
+  font-weight: 400;
+}
+
+/* Sombras duras tipo sello / etiqueta */
+.hard {
+  box-shadow: 5px 5px 0 0 var(--color-char);
+}
+.hard-sm {
+  box-shadow: 3px 3px 0 0 var(--color-char);
+}
+.hard-red {
+  box-shadow: 4px 4px 0 0 var(--color-ketchup);
+}
+.hard-yolk {
+  box-shadow: 4px 4px 0 0 var(--color-yolk);
+}
+
+/* Se levanta al pasar el mouse y se hunde al presionar */
+.lift {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.lift:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 0 var(--color-char);
+}
+.lift:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--color-char);
+}
+.lift.hard-red:hover {
+  box-shadow: 7px 7px 0 0 var(--color-ketchup);
+}
+.lift.hard-red:active {
+  box-shadow: 1px 1px 0 0 var(--color-ketchup);
+}
+.lift.hard-yolk:hover {
+  box-shadow: 7px 7px 0 0 var(--color-yolk);
+}
+.lift.hard-yolk:active {
+  box-shadow: 1px 1px 0 0 var(--color-yolk);
+}
+
+/* Textura de papel / grano sobre fondos de color */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Borde inferior en zigzag (ticket de pedido) */
+.ticket-edge {
+  --s: 16px;
+  -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--s) 100%;
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / var(--s) 100%;
+  padding-bottom: calc(var(--s) / 2 + 1.5rem);
 }

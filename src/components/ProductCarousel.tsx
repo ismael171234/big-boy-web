@@ -2,11 +2,10 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SectionHeading } from "@/components/SectionHeading";
 import type { Product } from "@/lib/types";
-import { Reveal } from "@/components/Reveal";
 
 export function ProductCarousel({ products }: { products: Product[] }) {
   // Primero los destacados; si hay pocos, se completa con los productos en oferta
@@ -19,102 +18,83 @@ export function ProductCarousel({ products }: { products: Product[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {
-    trackRef.current?.scrollBy({ left: dir * 340, behavior: "smooth" });
+    trackRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
   };
 
+  if (featured.length === 0) return null;
+
   return (
-    <section className="overflow-hidden bg-bone py-16 sm:py-20">
+    <section className="overflow-hidden bg-paper py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <Reveal className="mb-8 flex items-end justify-between">
-          <div>
-            <p className="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.3em] text-brick">
-              <span className="h-px w-8 bg-brick/50" />
-              Lo más pedido
-            </p>
-            <h2 className="font-display text-4xl tracking-wide text-char sm:text-5xl">
-              Nuestros favoritos
-            </h2>
-          </div>
-          <div className="hidden gap-2 sm:flex">
-            <motion.button
+        <SectionHeading title="Los favoritos" note="Los combos que no pueden faltar en tu mesa.">
+          <div className="hidden gap-3 sm:flex">
+            <button
               onClick={() => scrollBy(-1)}
               aria-label="Anterior"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.92 }}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-char/15 text-char transition-colors hover:border-brick hover:bg-brick hover:text-bone"
+              className="lift hard-sm flex h-11 w-11 items-center justify-center rounded-md border-[3px] border-char bg-paper"
             >
-              <ChevronLeft className="h-5 w-5" />
-            </motion.button>
-            <motion.button
+              <ArrowLeft className="h-5 w-5" strokeWidth={3} />
+            </button>
+            <button
               onClick={() => scrollBy(1)}
               aria-label="Siguiente"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.92 }}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-char/15 text-char transition-colors hover:border-brick hover:bg-brick hover:text-bone"
+              className="lift hard-sm flex h-11 w-11 items-center justify-center rounded-md border-[3px] border-char bg-yolk"
             >
-              <ChevronRight className="h-5 w-5" />
-            </motion.button>
+              <ArrowRight className="h-5 w-5" strokeWidth={3} />
+            </button>
           </div>
-        </Reveal>
+        </SectionHeading>
       </div>
 
-      <motion.div
+      <div
         ref={trackRef}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-60px" }}
-        variants={{ show: { transition: { staggerChildren: 0.1 } } }}
-        className="scrollbar-none flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-pl-5 px-5 pb-6 sm:scroll-pl-8 sm:px-8 xl:scroll-pl-[calc((100vw-80rem)/2+2rem)] xl:pl-[calc((100vw-80rem)/2+2rem)]"
+        className="scrollbar-none mt-10 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-pl-5 px-5 pb-10 pt-3 sm:scroll-pl-8 sm:px-8 xl:scroll-pl-[calc((100vw-80rem)/2+2rem)] xl:pl-[calc((100vw-80rem)/2+2rem)]"
       >
         {featured.map((product) => {
           const discountPct = product.compareAtPrice
             ? Math.round(100 - (product.basePrice / product.compareAtPrice) * 100)
             : null;
           return (
-            <motion.a
+            <a
               key={product.id}
               href={`#${product.id}`}
-              variants={{
-                hidden: { opacity: 0, x: 40 },
-                show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-              }}
-              whileHover={{ y: -8 }}
-              transition={{ type: "spring", stiffness: 300, damping: 22 }}
-              className="group relative w-[280px] shrink-0 snap-start overflow-hidden rounded-3xl bg-char shadow-xl shadow-char/15 ring-1 ring-char/10 sm:w-[320px]"
+              className="lift hard group relative flex w-[260px] shrink-0 snap-start flex-col overflow-hidden rounded-md border-[3px] border-char bg-yolk sm:w-[290px]"
             >
-              <div className="relative aspect-[4/5] w-full overflow-hidden">
+              <div className="relative aspect-square w-full">
                 {product.imageUrl ? (
                   <Image
                     src={product.imageUrl}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 640px) 280px, 320px"
-                    className="object-contain p-4 transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 640px) 260px, 290px"
+                    className="object-contain p-4 mix-blend-multiply transition-transform duration-300 ease-out group-hover:scale-105"
                   />
                 ) : (
-                  <PlaceholderImage
-                    category={product.category}
-                    className="h-full w-full transition-transform duration-500 group-hover:scale-105"
-                  />
+                  <PlaceholderImage category={product.category} className="h-full w-full" />
                 )}
-              </div>
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-char via-char/80 to-transparent p-5 pt-10">
-                {discountPct !== null && (
-                  <span className="mb-1 inline-block rounded bg-amber-light px-2 py-0.5 text-xs font-bold text-char">
+                {discountPct !== null && discountPct > 0 && (
+                  <span className="absolute left-3 top-3 -rotate-6 rounded-md border-2 border-char bg-ketchup px-2 py-0.5 font-poster text-sm text-yolk">
                     -{discountPct}%
                   </span>
                 )}
-                <h3 className="font-display text-2xl tracking-wide text-bone transition-colors group-hover:text-amber-light">
+              </div>
+              <div className="flex flex-1 flex-col border-t-[3px] border-char bg-char px-4 py-3 text-yolk">
+                <h3 className="font-poster text-lg uppercase leading-tight tracking-tight">
                   {product.name}
                 </h3>
-                <p className="mt-1 text-sm font-semibold text-amber-light">
+                <p className="mt-auto flex items-baseline gap-2 pt-1 text-sm font-bold text-bone">
                   S/ {product.basePrice.toFixed(2)}
+                  {product.compareAtPrice && product.compareAtPrice > product.basePrice && (
+                    <span className="text-xs font-medium text-bone/50 line-through">
+                      S/ {product.compareAtPrice.toFixed(2)}
+                    </span>
+                  )}
                 </p>
               </div>
-            </motion.a>
+            </a>
           );
         })}
-      </motion.div>
+      </div>
     </section>
   );
 }

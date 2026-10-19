@@ -2,8 +2,10 @@ import { Hero } from "@/components/Hero";
 import { Marquee } from "@/components/Marquee";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import { Features } from "@/components/Features";
+import { PhotoBand } from "@/components/PhotoBand";
 import { MenuSection } from "@/components/MenuSection";
 import { PromoBanner } from "@/components/PromoBanner";
+import { Loyalty } from "@/components/Loyalty";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Faq } from "@/components/Faq";
 import { ReservationSection } from "@/components/ReservationSection";
@@ -31,12 +33,14 @@ export default async function Home() {
       </div>
 
       <Features />
+      <PhotoBand />
 
       <div id="menu" className="scroll-mt-20">
         <MenuSection products={products} />
       </div>
 
       <PromoBanner products={products} />
+      <Loyalty />
       <HowItWorks />
       <Faq />
 
